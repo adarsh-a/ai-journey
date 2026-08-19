@@ -1,0 +1,893 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#E9EAE6;
+    --panel:#FCFCFB;
+    --ink:#16181A;
+    --ink-mid:#4A5054;
+    --ink-low:#878D90;
+    --rule:#D2D4CE;
+    --rule-strong:#B4B7B0;
+    --accent:#3B37B8;
+    --accent-soft:#EAE9FA;
+    --done:#0F6E62;
+    --done-soft:#E2F0EE;
+    --display:'Archivo',system-ui,sans-serif;
+    --body:'Source Serif 4',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --spine:56px;
+  }
+
+  *{box-sizing:border-box;}
+
+  .wrap{
+    font-family:var(--body);
+    color:var(--ink);
+    background:var(--paper);
+    padding:0 0 64px 0;
+    line-height:1.55;
+    max-width:900px;
+    margin:0 auto;
+    position:relative;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    padding:40px 28px 26px var(--spine);
+    border-bottom:2px solid var(--ink);
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-low);
+    margin:0 0 14px 0;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:clamp(30px,5.2vw,46px);
+    line-height:.98;
+    letter-spacing:-.025em;
+    margin:0 0 14px 0;
+  }
+  .standfirst{
+    font-size:16px;
+    color:var(--ink-mid);
+    margin:0;
+    max-width:56ch;
+  }
+
+  /* ---------- progress meter ---------- */
+  .meter{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-top:26px;
+    flex-wrap:wrap;
+  }
+  .meter-num{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:38px;
+    letter-spacing:-.03em;
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .meter-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-low);
+  }
+  .meter-bar{
+    flex:1 1 200px;
+    height:8px;
+    background:var(--rule);
+    position:relative;
+    min-width:160px;
+  }
+  .meter-fill{
+    position:absolute;inset:0 auto 0 0;
+    width:0%;
+    background:var(--accent);
+    transition:width .45s cubic-bezier(.2,.7,.3,1);
+  }
+
+  /* ---------- gate notice ---------- */
+  .gate-notice{
+    margin:22px var(--spine) 0 var(--spine);
+    margin-right:28px;
+    border-left:3px solid var(--accent);
+    background:var(--accent-soft);
+    padding:12px 16px;
+    font-size:14px;
+    color:var(--ink-mid);
+  }
+  .gate-notice strong{color:var(--ink);}
+  .gate-notice.cleared{
+    border-left-color:var(--done);
+    background:var(--done-soft);
+  }
+
+  /* ---------- phase ---------- */
+  .phase{
+    padding:0 28px 0 var(--spine);
+    margin-top:44px;
+  }
+  .phase-head{
+    border-top:1px solid var(--ink);
+    padding-top:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .phase-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:-.01em;
+    margin:0;
+  }
+  .phase-count{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--ink-low);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .phase-count.complete{color:var(--done);font-weight:700;}
+  .phase-goal{
+    font-size:14px;
+    color:var(--ink-mid);
+    margin:8px 0 0 0;
+    max-width:60ch;
+  }
+
+  /* ---------- week card ---------- */
+  .week{
+    background:var(--panel);
+    border:1px solid var(--rule);
+    margin-top:16px;
+    position:relative;
+    transition:border-color .25s, opacity .25s;
+  }
+  .week.done{border-color:var(--done);}
+  .week-head{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:16px 18px 14px 18px;
+    border-bottom:1px solid var(--rule);
+  }
+  .week-num{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:.06em;
+    color:var(--ink-low);
+    padding-top:4px;
+    white-space:nowrap;
+  }
+  .week.done .week-num{color:var(--done);}
+  .week-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:17px;
+    letter-spacing:-.01em;
+    margin:0;
+    flex:1;
+  }
+  .week-tick{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.08em;
+    color:var(--ink-low);
+    font-variant-numeric:tabular-nums;
+    padding-top:5px;
+  }
+
+  ul.tasks{list-style:none;margin:0;padding:6px 0;}
+  li.task{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:9px 18px;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  li.task:hover{background:#F2F2EF;}
+  li.task:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+
+  .box{
+    flex:0 0 auto;
+    width:17px;height:17px;
+    border:1.5px solid var(--rule-strong);
+    margin-top:3px;
+    background:#fff;
+    position:relative;
+    transition:background .18s, border-color .18s;
+  }
+  .box::after{
+    content:"";
+    position:absolute;
+    left:4.5px;top:1px;
+    width:5px;height:10px;
+    border:solid #fff;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg) scale(0);
+    transition:transform .18s cubic-bezier(.3,1.5,.5,1);
+  }
+  li.task.checked .box{background:var(--done);border-color:var(--done);}
+  li.task.checked .box::after{transform:rotate(45deg) scale(1);}
+
+  .task-body{flex:1;min-width:0;}
+  .task-kind{
+    font-family:var(--mono);
+    font-size:9.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-low);
+    display:block;
+    margin-bottom:2px;
+  }
+  .kind-gate{color:var(--accent);font-weight:700;}
+  .task-text{font-size:15px;color:var(--ink);transition:color .2s;}
+  li.task.checked .task-text{color:var(--ink-low);text-decoration:line-through;text-decoration-thickness:1px;}
+  li.task.checked .task-kind{color:#B6BAB8;}
+
+  .task-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:7px;
+  }
+  .task-link{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.01em;
+    color:var(--accent);
+    text-decoration:none;
+    border:1px solid var(--rule-strong);
+    border-radius:2px;
+    padding:2px 8px;
+    background:#fff;
+    transition:background .15s, border-color .15s, color .15s;
+    white-space:nowrap;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .task-link::before{content:"↗ ";opacity:.6;}
+  .task-link:hover{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .task-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  li.task.checked .task-link{opacity:.5;}
+
+  li.task.gate{background:#F6F5FE;}
+  li.task.gate:hover{background:#EFEEFB;}
+  li.task.gate.checked{background:var(--done-soft);}
+
+  /* ---------- capstone ---------- */
+  .capstone{
+    margin:44px 28px 0 var(--spine);
+    border:2px solid var(--ink);
+    background:var(--panel);
+    padding:20px;
+  }
+  .capstone h3{
+    font-family:var(--display);
+    font-weight:800;
+    font-size:20px;
+    margin:6px 0 8px 0;
+    letter-spacing:-.02em;
+  }
+  .capstone p{font-size:15px;color:var(--ink-mid);margin:0 0 14px 0;}
+
+  /* ---------- reference ---------- */
+  details.ref{
+    margin:34px 28px 0 var(--spine);
+    border-top:1px solid var(--ink);
+    padding-top:12px;
+  }
+  details.ref summary{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-mid);
+    cursor:pointer;
+    list-style:none;
+  }
+  details.ref summary::-webkit-details-marker{display:none;}
+  details.ref summary::before{content:"+ ";color:var(--accent);font-weight:700;}
+  details.ref[open] summary::before{content:"− ";}
+  .ref-body{font-size:14.5px;color:var(--ink-mid);margin-top:14px;}
+  .ref-body h4{
+    font-family:var(--display);font-weight:600;font-size:15px;
+    color:var(--ink);margin:18px 0 6px 0;
+  }
+  .ref-body code{font-family:var(--mono);font-size:12.5px;background:#EFEFEC;padding:1px 4px;}
+  table.q{width:100%;border-collapse:collapse;margin:10px 0;font-family:var(--mono);font-size:12px;}
+  table.q th,table.q td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule);}
+  table.q th{color:var(--ink-low);font-weight:500;letter-spacing:.06em;text-transform:uppercase;font-size:10px;}
+
+  /* ---------- footer controls ---------- */
+  .controls{
+    margin:40px 28px 0 var(--spine);
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--rule);
+    padding-top:16px;
+  }
+  button.reset{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    background:none;
+    border:1px solid var(--rule-strong);
+    color:var(--ink-mid);
+    padding:8px 14px;
+    cursor:pointer;
+    transition:.18s;
+  }
+  button.reset:hover{border-color:var(--ink);color:var(--ink);}
+  button.reset.confirm{border-color:#A3342A;color:#A3342A;}
+  .status{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-low);
+    letter-spacing:.05em;
+  }
+  .export-out{
+    margin:14px 28px 0 var(--spine);
+    background:#22262E;
+    color:#D9DEE3;
+    font-family:var(--mono);
+    font-size:12px;
+    line-height:1.6;
+    padding:14px 16px;
+    overflow-x:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+    border-left:3px solid var(--accent);
+  }
+
+  /* ---------- the spine (signature) ---------- */
+  .spine{
+    position:absolute;
+    left:18px;top:0;bottom:0;
+    width:20px;
+    pointer-events:none;
+  }
+  .spine-track{
+    position:absolute;
+    left:9px;top:0;bottom:0;
+    width:2px;
+    background:var(--rule);
+  }
+  .spine-fill{
+    position:absolute;
+    left:9px;top:0;
+    width:2px;
+    height:0;
+    background:var(--accent);
+    transition:height .5s cubic-bezier(.2,.7,.3,1);
+  }
+  .spine-mark{
+    position:absolute;
+    left:2px;
+    width:16px;
+    height:1px;
+    background:var(--rule-strong);
+  }
+  .spine-mark.hit{background:var(--done);height:2px;}
+  .spine-mark span{
+    position:absolute;
+    left:-1px;top:-14px;
+    font-family:var(--mono);
+    font-size:9px;
+    color:var(--ink-low);
+  }
+  .spine-mark.hit span{color:var(--done);font-weight:700;}
+
+  @media (max-width:640px){
+    :root{--spine:40px;}
+    .spine{left:8px;width:16px;}
+    .spine-track,.spine-fill{left:7px;}
+    .spine-mark{width:13px;left:1px;}
+    .masthead{padding-right:18px;}
+    .phase,.gate-notice,.capstone,.controls,details.ref{padding-right:0;margin-right:18px;}
+    .phase{padding-right:18px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;}
+  }
+</style>
+
+<div class="wrap">
+  <div class="spine" id="spine" aria-hidden="true">
+    <div class="spine-track"></div>
+    <div class="spine-fill" id="spineFill"></div>
+  </div>
+
+  <header class="masthead">
+    <p class="eyebrow">12-week plan / software architect → AI systems</p>
+    <h1>Learning the machinery<br>before picking a lane.</h1>
+    <p class="standfirst">Every week ends in something built, not something watched. Tick items as you finish them — progress saves automatically.</p>
+
+    <div class="meter">
+      <div>
+        <div class="meter-num" id="pct">0%</div>
+        <div class="meter-label">complete</div>
+      </div>
+      <div class="meter-bar"><div class="meter-fill" id="fill"></div></div>
+      <div class="meter-label" id="countLabel">0 of 0 items</div>
+    </div>
+  </header>
+
+  <div class="gate-notice" id="gateNotice">
+    <strong>Phase 1 is a gate.</strong> Don't move past Week 3 until the mechanical model is solid — everything downstream is easier when you reason from the machinery instead of analogies.
+  </div>
+
+  <main id="plan"></main>
+
+  <section class="capstone">
+    <p class="eyebrow" style="margin-bottom:0">Optional / ongoing</p>
+    <h3>Capstone</h3>
+    <p>One non-trivial system combining everything: retrieval, tool use, real evaluation, cost and latency budgets, graceful degradation. It hits every hard problem at once and demonstrates exactly the architectural judgement that's currently scarce.</p>
+    <ul class="tasks" id="capstoneList"></ul>
+  </section>
+
+  <details class="ref">
+    <summary>Reference — quantization, formats, runners</summary>
+    <div class="ref-body">
+      <p><strong>Keep three names straight:</strong> <code>GGUF</code> is a file format. <code>JANG</code> is a different file format (Apple Silicon only). <code>Jan</code> is an application that runs GGUF files.</p>
+
+      <h4>Quantization, roughly (8B model)</h4>
+      <table class="q">
+        <tr><th>Precision</th><th>Size</th><th>Runs on</th></tr>
+        <tr><td>FP16</td><td>~16 GB</td><td>Dedicated GPU</td></tr>
+        <tr><td>Q8</td><td>~8.5 GB</td><td>High-end laptop / GPU</td></tr>
+        <tr><td>Q5_K_M</td><td>~5.5 GB</td><td>Most modern laptops</td></tr>
+        <tr><td>Q4_K_M</td><td>~4.5 GB</td><td>8–16 GB RAM</td></tr>
+      </table>
+      <p>Q4_K_M is the common default — the accepted sweet spot. Below 4-bit, degradation gets noticeable fast. 8 GB RAM is the realistic minimum for a 7B model; 16 GB is comfortable.</p>
+
+      <h4>Formats</h4>
+      <p><strong>GGUF</strong> — llama.cpp's format, used by Ollama, Jan, LM Studio. CPU and mixed CPU/GPU inference on consumer hardware. Quantization level sits in the filename.<br>
+      <strong>safetensors</strong> — full-precision weights on Hugging Face; what you quantize from and serve from on GPU.<br>
+      <strong>MLX</strong> — Apple's framework. Standard MLX quantization uses one uniform bit width across all layers.<br>
+      <strong>JANG</strong> (<code>.jang</code>) — adaptive mixed-precision in the MLX family. Assigns different bit widths per layer type, on the reasoning that attention layers (~12% of parameters) are far more precision-sensitive than MLP layers. Served via MLX Studio. Apple Silicon only; quality claims are still thinly evidenced — run your own evals.<br>
+      <strong>AWQ / GPTQ / EXL2</strong> — GPU quantization for server-side engines like vLLM.</p>
+
+      <h4>The split that matters</h4>
+      <p>GGUF runs models on individual machines. AWQ/GPTQ with vLLM serves many concurrent users. Different problems, different tools — and the generalizable idea from JANG is that quantization needn't be uniform, which is a tradeoff analysis that belongs to an architect.</p>
+
+      <h4>Why an architect cares</h4>
+      <p>Data residency, cost at volume, and the routing pattern — cheap local model for the easy majority, frontier model on escalation. Designing that router, and the evaluation that tells you where the boundary sits, is the job. The OpenAI-compatible endpoint every local runner exposes is the lever: design the abstraction for it and local-vs-hosted becomes configuration, not a rewrite.</p>
+    </div>
+  </details>
+
+  <div class="controls">
+    <button class="reset" id="exportBtn">Copy progress as code</button>
+    <button class="reset" id="resetBtn">Clear all progress</button>
+    <span class="status" id="status">Loading…</span>
+  </div>
+
+  <pre class="export-out" id="exportOut" hidden></pre>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   PROGRESS SOURCE OF TRUTH
+
+   Every task below carries a `done:` flag. Two ways to seed it:
+
+   1. Hand-edit a single item        →  flip its `done:false` to `done:true`
+   2. Bulk-update from the browser   →  press “Copy progress as code”, then
+                                        paste the result over PRESET_DONE below
+
+   PRECEDENCE: clicks in the browser are saved and normally win over this file,
+   so edits here won't show up on a device you've already been ticking on.
+   Set SOURCE_WINS = true to make this file authoritative and ignore saved
+   state — that's the switch to flip after hand-editing.
+   ───────────────────────────────────────────────────────────── */
+
+const SOURCE_WINS = false;
+
+const PRESET_DONE = [
+  "w1a", "w1b", "w1c", "w1d"
+];
+
+const PHASES = [
+  {
+    id:"p1", title:"Phase 1 — The core mechanical model", weeks:"Weeks 1–3",
+    goal:"A load-bearing understanding of what a language model is, so surprising behaviour makes mechanical sense rather than seeming like magic.",
+    items:[
+      {w:1, title:"What a language model actually is", tasks:[
+        {done:false, id:"w1a", kind:"learn", text:"Next-token prediction, tokenization, embeddings, training vs. inference. Karpathy's “Intro to Large Language Models” talk."},
+        {done:false, id:"w1b", kind:"learn", text:"Start Karpathy's “Let's build GPT from scratch.”"},
+        {done:false, id:"w1c", kind:"build", text:"Keep a running doc answering, in your own words: what is a token, what is an embedding, what happens at inference step by step."},
+        {done:false, id:"w1d", kind:"done when", text:"You can explain tokenization without hand-waving — including why it breaks character counting, arithmetic and non-English text."}
+      ]},
+      {w:2, title:"Attention and the transformer", tasks:[
+        {done:false, id:"w2a", kind:"learn", text:"Finish “Let's build GPT.” Type the code alongside him rather than watching."},
+        {done:false, id:"w2b", kind:"build", text:"Run the mini-GPT locally and train it on a text file you chose. Watch loss drop and samples improve."},
+        {done:false, id:"w2c", kind:"done when", text:"You can explain what attention computes, and why context window size is a real architectural constraint."}
+      ]},
+      {w:3, title:"From mechanics to behaviour", tasks:[
+        {done:false, id:"w3a", kind:"learn", text:"Why models hallucinate, sampling and temperature, the cost of context, knowledge cutoffs. Read a few production failure write-ups."},
+        {done:false, id:"w3b", kind:"build", text:"Call a hosted API from a script. Vary temperature. Deliberately trigger a hallucination and a tokenization bug, and write down why each happened."},
+        {done:false, id:"w3c", kind:"gate", text:"GATE — you can explain hallucination, nondeterminism and context limits at the level of the machinery. Don't proceed until this is solid."}
+      ]}
+    ]
+  },
+  {
+    id:"p2", title:"Phase 2 — Shaping model behaviour", weeks:"Weeks 4–6",
+    goal:"The layer directly above the model, where most real design mistakes get made.",
+    items:[
+      {w:4, title:"Prompting as engineering", tasks:[
+        {done:false, id:"w4a", kind:"learn", text:"Structured prompting, not tricks: roles, few-shot, decomposition, chain-of-thought, why prompts must be testable."},
+        {done:false, id:"w4b", kind:"build", text:"Pick one real task. Write 3–4 prompt versions and score them against test cases you define."},
+        {done:false, id:"w4c", kind:"done when", text:"You treat a prompt like code — versioned, tested, with known failure cases."}
+      ]},
+      {w:5, title:"Structured output and reliability", tasks:[
+        {done:false, id:"w5a", kind:"learn", text:"Reliable JSON output, function/tool calling at the API level, malformed responses, retries, validation."},
+        {done:false, id:"w5b", kind:"build", text:"Extend week 4's task to return validated JSON. Add schema validation and a repair path for malformed output."},
+        {done:false, id:"w5c", kind:"done when", text:"A non-deterministic component produces output deterministic software can safely depend on, and you know its failure modes."}
+      ]},
+      {w:6, title:"The key decision: prompt vs. RAG vs. fine-tune", tasks:[
+        {done:false, id:"w6a", kind:"learn", text:"The decision tree and the cost, latency, freshness and maintenance tradeoffs of each."},
+        {done:false, id:"w6b", kind:"build", text:"Write a one-page decision doc for a real system — the kind you'd take into a design review."},
+        {done:false, id:"w6c", kind:"done when", text:"You can defend the choice on cost, latency, freshness and maintenance grounds."}
+      ]}
+    ]
+  },
+  {
+    id:"p3", title:"Phase 3 — System patterns", weeks:"Weeks 7–10",
+    goal:"The two dominant production patterns. This is where your architecture background starts compounding hard.",
+    items:[
+      {w:7, title:"RAG, part 1 — the pipeline", tasks:[
+        {done:false, id:"w7a", kind:"learn", text:"Embeddings, vector stores, chunking strategies, similarity vs. hybrid search."},
+        {done:false, id:"w7b", kind:"build", text:"A working RAG system over documents you care about: ingest → chunk → embed → store → retrieve → answer."},
+        {done:false, id:"w7c", kind:"done when", text:"“Chat with my documents” works and you can name each stage's job."}
+      ]},
+      {w:8, title:"RAG, part 2 — where it gets hard", tasks:[
+        {done:false, id:"w8a", kind:"learn", text:"Retrieval quality, chunking tradeoffs, stale and conflicting data, and how retrieval is actually evaluated."},
+        {done:false, id:"w8b", kind:"build", text:"Add a retrieval eval harness: question/expected-source pairs plus a measure of whether the right context came back. Introduce a stale document and watch what breaks."},
+        {done:false, id:"w8c", kind:"done when", text:"You can measure retrieval quality rather than eyeball it."}
+      ]},
+      {w:9, title:"Agentic systems, part 1", tasks:[
+        {done:false, id:"w9a", kind:"learn", text:"Tool calling, multi-step workflows, orchestration. LangGraph for patterns, MCP for how tool/data integration is standardising. Focus on patterns, not framework syntax."},
+        {done:false, id:"w9b", kind:"build", text:"An agent using 2–3 tools for a multi-step task. Happy path first."},
+        {done:false, id:"w9c", kind:"done when", text:"You understand the loop: model decides → tool executes → result feeds back → repeat."}
+      ]},
+      {w:10, title:"Agentic systems, part 2 — reliability", tasks:[
+        {done:false, id:"w10a", kind:"learn", text:"Error recovery, loop control, cost containment, and where human-in-the-loop checkpoints belong. Pure architecture in an AI costume."},
+        {done:false, id:"w10b", kind:"build", text:"Harden week 9's agent: step limits, cost tracking, graceful tool failure, an approval checkpoint for consequential actions."},
+        {done:false, id:"w10c", kind:"done when", text:"It degrades gracefully instead of failing weirdly, and you can state its worst-case cost."}
+      ]}
+    ]
+  },
+  {
+    id:"p4", title:"Phase 4 — Production reality", weeks:"Weeks 11–12",
+    goal:"What separates a demo from a system. Nearly pure architecture, and where many teams are weakest — which is why it's high-leverage for you.",
+    items:[
+      {w:11, title:"Evaluation and observability", tasks:[
+        {done:false, id:"w11a", kind:"learn", text:"LLM-as-judge, regression testing for prompts, tracing a request through a multi-step system."},
+        {done:false, id:"w11b", kind:"build", text:"Add an eval suite and tracing to an earlier system. Change a prompt and see immediately whether quality regressed."},
+        {done:false, id:"w11c", kind:"done when", text:"You'd say “this still works” and back it with evidence rather than vibes."}
+      ]},
+      {w:12, title:"The inference layer, local models, synthesis", tasks:[
+        {done:false, id:"w12a", kind:"learn", text:"Hosted vs. self-hosted, quantization and model formats (see reference below), GPU/RAM economics, latency budgets, caching."},
+        {done:false, id:"w12b", kind:"build", text:"Run a model locally — Jan, LM Studio or Ollama with a quantized 7B/8B. Compare quality and speed against the hosted API from week 3."},
+        {done:false, id:"w12c", kind:"build", text:"Point an earlier system at the local model via its OpenAI-compatible endpoint and see what breaks."},
+        {done:false, id:"w12d", kind:"build", text:"One page: which parts of these 12 weeks energised you, and which drained you."},
+        {done:false, id:"w12e", kind:"done when", text:"You can reason about cost, latency, control and privacy tradeoffs — and you have a real answer to “which path.”"}
+      ]}
+    ]
+  }
+];
+
+/* Resource links keyed by task id. All URLs verified current. */
+const LINKS = {
+  w1a:[{t:"Karpathy — Intro to LLMs (1hr)", u:"https://www.youtube.com/watch?v=zjkBMFhNj_g"}],
+  w1b:[{t:"Karpathy — Let's build GPT", u:"https://www.youtube.com/watch?v=kCc8FmEb1nY"}],
+  w2a:[{t:"Neural Networks: Zero to Hero", u:"https://karpathy.ai/zero-to-hero.html"}],
+  w2b:[{t:"nanoGPT repo", u:"https://github.com/karpathy/nanoGPT"}],
+  w3a:[{t:"Anthropic — how Claude models behave", u:"https://docs.anthropic.com/en/docs/about-claude/models/overview"}],
+  w3b:[{t:"Anthropic API quickstart", u:"https://docs.anthropic.com/en/docs/get-started"}],
+  w4a:[{t:"Anthropic — prompt engineering", u:"https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}],
+  w5a:[{t:"Anthropic — tool use", u:"https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview"}],
+  w6a:[{t:"Hugging Face LLM Course", u:"https://huggingface.co/learn/llm-course/chapter1/1"}],
+  w7a:[{t:"HF LLM Course — RAG & retrieval", u:"https://huggingface.co/learn/llm-course/chapter1/1"}],
+  w9a:[
+    {t:"LangGraph docs", u:"https://langchain-ai.github.io/langgraph/"},
+    {t:"Model Context Protocol", u:"https://modelcontextprotocol.io"},
+    {t:"HF Agents Course", u:"https://huggingface.co/learn/agents-course"}
+  ],
+  w11a:[{t:"MCP spec (tracing/structure ref)", u:"https://modelcontextprotocol.io"}],
+  w12a:[{t:"vLLM docs (serving/quantization)", u:"https://docs.vllm.ai/en/latest/"}],
+  w12b:[
+    {t:"Jan", u:"https://jan.ai"},
+    {t:"Ollama", u:"https://ollama.com"},
+    {t:"LM Studio", u:"https://lmstudio.ai"}
+  ]
+};
+
+const CAPSTONE = [
+  {done:false, id:"cap1", kind:"build", text:"One system combining retrieval, tool use, evaluation, cost and latency budgets, and graceful degradation."}
+];
+
+const STORAGE_KEY = "ai-arch-plan-progress";
+let checked = new Set();
+let saveTimer = null;
+
+const el = id => document.getElementById(id);
+const statusEl = el("status");
+
+function taskLi(t){
+  const li = document.createElement("li");
+  li.className = "task" + (t.kind === "gate" ? " gate" : "");
+  li.tabIndex = 0;
+  li.setAttribute("role","checkbox");
+  li.dataset.id = t.id;
+  li.innerHTML =
+    '<span class="box"></span>' +
+    '<span class="task-body">' +
+      '<span class="task-kind' + (t.kind === "gate" ? " kind-gate" : "") + '">' + t.kind + '</span>' +
+      '<span class="task-text"></span>' +
+    '</span>';
+  li.querySelector(".task-text").textContent = t.text;
+
+  const links = LINKS[t.id];
+  if(links && links.length){
+    const wrap = document.createElement("span");
+    wrap.className = "task-links";
+    links.forEach(l => {
+      const a = document.createElement("a");
+      a.className = "task-link";
+      a.href = l.u;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = l.t;
+      a.addEventListener("click", e => e.stopPropagation());
+      a.addEventListener("keydown", e => e.stopPropagation());
+      wrap.appendChild(a);
+    });
+    li.querySelector(".task-body").appendChild(wrap);
+  }
+
+  const toggle = () => { 
+    checked.has(t.id) ? checked.delete(t.id) : checked.add(t.id);
+    render(); save();
+  };
+  li.addEventListener("click", toggle);
+  li.addEventListener("keydown", e => {
+    if(e.key === " " || e.key === "Enter"){ e.preventDefault(); toggle(); }
+  });
+  return li;
+}
+
+function build(){
+  const root = el("plan");
+  PHASES.forEach(p => {
+    const sec = document.createElement("section");
+    sec.className = "phase";
+    sec.dataset.phase = p.id;
+    const head = document.createElement("div");
+    head.className = "phase-head";
+    head.innerHTML =
+      '<h2 class="phase-title"></h2><span class="phase-count" data-count="' + p.id + '"></span>';
+    head.querySelector(".phase-title").textContent = p.title;
+    sec.appendChild(head);
+    const goal = document.createElement("p");
+    goal.className = "phase-goal";
+    goal.textContent = p.goal;
+    sec.appendChild(goal);
+
+    p.items.forEach(wk => {
+      const card = document.createElement("article");
+      card.className = "week";
+      card.dataset.week = wk.w;
+      const wh = document.createElement("div");
+      wh.className = "week-head";
+      wh.innerHTML =
+        '<span class="week-num">W' + String(wk.w).padStart(2,"0") + '</span>' +
+        '<h3 class="week-title"></h3>' +
+        '<span class="week-tick" data-tick="' + wk.w + '"></span>';
+      wh.querySelector(".week-title").textContent = wk.title;
+      card.appendChild(wh);
+      const ul = document.createElement("ul");
+      ul.className = "tasks";
+      wk.tasks.forEach(t => ul.appendChild(taskLi(t)));
+      card.appendChild(ul);
+      sec.appendChild(card);
+    });
+    root.appendChild(sec);
+  });
+
+  const cl = el("capstoneList");
+  CAPSTONE.forEach(t => cl.appendChild(taskLi(t)));
+
+  buildSpine();
+}
+
+function buildSpine(){
+  const spine = el("spine");
+  document.querySelectorAll(".week").forEach(card => {
+    const m = document.createElement("div");
+    m.className = "spine-mark";
+    m.dataset.forWeek = card.dataset.week;
+    m.innerHTML = '<span>' + card.dataset.week + '</span>';
+    spine.appendChild(m);
+  });
+  positionSpine();
+  window.addEventListener("resize", positionSpine);
+}
+
+function positionSpine(){
+  const wrapTop = document.querySelector(".wrap").getBoundingClientRect().top;
+  document.querySelectorAll(".spine-mark").forEach(m => {
+    const card = document.querySelector('.week[data-week="' + m.dataset.forWeek + '"]');
+    if(!card) return;
+    m.style.top = (card.getBoundingClientRect().top - wrapTop + 20) + "px";
+  });
+}
+
+function allTasks(){
+  const t = [];
+  PHASES.forEach(p => p.items.forEach(w => w.tasks.forEach(x => t.push(x))));
+  return t;
+}
+
+function render(){
+  const total = allTasks().length;
+  const done = allTasks().filter(t => checked.has(t.id)).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  el("pct").textContent = pct + "%";
+  el("fill").style.width = pct + "%";
+  el("countLabel").textContent = done + " of " + total + " items";
+
+  document.querySelectorAll("li.task").forEach(li => {
+    const on = checked.has(li.dataset.id);
+    li.classList.toggle("checked", on);
+    li.setAttribute("aria-checked", on ? "true" : "false");
+  });
+
+  PHASES.forEach(p => {
+    const tasks = p.items.flatMap(w => w.tasks);
+    const d = tasks.filter(t => checked.has(t.id)).length;
+    const c = document.querySelector('[data-count="' + p.id + '"]');
+    c.textContent = p.weeks + " · " + d + "/" + tasks.length;
+    c.classList.toggle("complete", d === tasks.length);
+
+    p.items.forEach(w => {
+      const d2 = w.tasks.filter(t => checked.has(t.id)).length;
+      const card = document.querySelector('.week[data-week="' + w.w + '"]');
+      card.classList.toggle("done", d2 === w.tasks.length);
+      card.querySelector('[data-tick="' + w.w + '"]').textContent = d2 + "/" + w.tasks.length;
+      const mark = document.querySelector('.spine-mark[data-for-week="' + w.w + '"]');
+      if(mark) mark.classList.toggle("hit", d2 === w.tasks.length);
+    });
+  });
+
+  const marks = [...document.querySelectorAll(".spine-mark")];
+  const hits = marks.filter(m => m.classList.contains("hit"));
+  const fill = el("spineFill");
+  fill.style.height = hits.length ? (parseFloat(hits[hits.length-1].style.top) || 0) + "px" : "0px";
+
+  const gate = el("gateNotice");
+  const gateDone = checked.has("w3c");
+  gate.classList.toggle("cleared", gateDone);
+  gate.innerHTML = gateDone
+    ? '<strong>Phase 1 cleared.</strong> You have the mechanical model. Everything from here reads differently — you\'re reasoning from the machinery now, not from analogies.'
+    : '<strong>Phase 1 is a gate.</strong> Don\'t move past Week 3 until the mechanical model is solid — everything downstream is easier when you reason from the machinery instead of analogies.';
+
+  positionSpine();
+}
+
+function sourceDefaults(){
+  const s = new Set(PRESET_DONE);
+  allTasks().forEach(t => { if(t.done) s.add(t.id); });
+  return s;
+}
+
+async function load(){
+  checked = sourceDefaults();
+  if(SOURCE_WINS){
+    statusEl.textContent = "Source file is authoritative — saved state ignored";
+    render();
+    return;
+  }
+  try{
+    const r = await window.storage.get(STORAGE_KEY);
+    if(r && r.value){
+      const saved = JSON.parse(r.value);
+      if(Array.isArray(saved)){
+        // legacy format: a plain list of completed ids
+        saved.forEach(id => checked.add(id));
+      }else{
+        // per-item map — a saved false overrides a source `done:true`
+        Object.entries(saved).forEach(([id,on]) => on ? checked.add(id) : checked.delete(id));
+      }
+    }
+    statusEl.textContent = "Progress saved on this device";
+  }catch(e){
+    statusEl.textContent = sourceDefaults().size ? "Loaded from source file" : "Starting fresh";
+  }
+  render();
+}
+
+function save(){
+  if(SOURCE_WINS){ statusEl.textContent = "Not saving — SOURCE_WINS is on"; return; }
+  clearTimeout(saveTimer);
+  statusEl.textContent = "Saving…";
+  saveTimer = setTimeout(async () => {
+    const map = {};
+    allTasks().forEach(t => { map[t.id] = checked.has(t.id); });
+    try{
+      const r = await window.storage.set(STORAGE_KEY, JSON.stringify(map));
+      statusEl.textContent = r ? "Saved" : "Couldn't save — changes stay for this session only";
+    }catch(e){
+      statusEl.textContent = "Couldn't save — changes stay for this session only";
+    }
+  }, 350);
+}
+
+function exportCode(){
+  const ids = allTasks().filter(t => checked.has(t.id)).map(t => t.id);
+  return 'const PRESET_DONE = [' + (ids.length ? '\n  ' + ids.map(i => '"' + i + '"').join(', ') + '\n' : '') + '];';
+}
+
+el("exportBtn").addEventListener("click", async e => {
+  const out = el("exportOut");
+  const code = exportCode();
+  out.hidden = false;
+  out.textContent = code;
+  try{
+    await navigator.clipboard.writeText(code);
+    statusEl.textContent = "Copied — paste over PRESET_DONE in the file";
+  }catch(err){
+    statusEl.textContent = "Select the block below and copy it";
+  }
+  out.scrollIntoView({behavior:"smooth", block:"nearest"});
+});
+
+let confirming = false;
+el("resetBtn").addEventListener("click", async e => {
+  const b = e.currentTarget;
+  if(!confirming){
+    confirming = true;
+    b.textContent = "Tap again to clear everything";
+    b.classList.add("confirm");
+    setTimeout(() => {
+      if(confirming){ confirming = false; b.textContent = "Clear all progress"; b.classList.remove("confirm"); }
+    }, 4000);
+    return;
+  }
+  confirming = false;
+  b.textContent = "Clear all progress";
+  b.classList.remove("confirm");
+  checked = new Set();
+  render();
+  try{ await window.storage.delete(STORAGE_KEY); statusEl.textContent = "Cleared"; }
+  catch(err){ statusEl.textContent = "Cleared for this session"; }
+});
+
+build();
+load();
+</script>
