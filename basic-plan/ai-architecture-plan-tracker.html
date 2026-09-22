@@ -1,4 +1,10 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A practical 12-week roadmap from software architect to production-minded AI architect.">
+<title>AI Architecture Learning Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,6 +29,11 @@
   }
 
   *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--paper);
+  }
 
   .wrap{
     font-family:var(--body);
@@ -251,6 +262,17 @@
     gap:6px;
     margin-top:7px;
   }
+  .task-links::before{
+    content:"Materials";
+    align-self:center;
+    font-family:var(--mono);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-low);
+    margin-right:2px;
+  }
   .task-link{
     font-family:var(--mono);
     font-size:11px;
@@ -415,6 +437,9 @@
     *{transition:none!important;}
   }
 </style>
+</head>
+
+<body>
 
 <div class="wrap">
   <div class="spine" id="spine" aria-hidden="true">
@@ -423,9 +448,9 @@
   </div>
 
   <header class="masthead">
-    <p class="eyebrow">12-week plan / software architect → AI systems</p>
-    <h1>Learning the machinery<br>before picking a lane.</h1>
-    <p class="standfirst">Every week ends in something built, not something watched. Tick items as you finish them — progress saves automatically.</p>
+    <p class="eyebrow">12-week plan / software architect → AI architect</p>
+    <h1>From model mechanics<br>to production AI systems.</h1>
+    <p class="standfirst">Every week ends in an architecture decision, experiment or working system. The plan emphasises context, retrieval, workflows, security, evaluation and operations—not framework collecting.</p>
 
     <div class="meter">
       <div>
@@ -446,14 +471,14 @@
   <section class="capstone">
     <p class="eyebrow" style="margin-bottom:0">Optional / ongoing</p>
     <h3>Capstone</h3>
-    <p>One non-trivial system combining everything: retrieval, tool use, real evaluation, cost and latency budgets, graceful degradation. It hits every hard problem at once and demonstrates exactly the architectural judgement that's currently scarce.</p>
+    <p>One non-trivial system that proves you can make and defend the full set of AI architecture decisions: model and context strategy, retrieval, tools, security boundaries, evaluation, observability, governance, cost, latency and graceful degradation.</p>
     <ul class="tasks" id="capstoneList"></ul>
   </section>
 
   <details class="ref">
     <summary>Reference — quantization, formats, runners</summary>
     <div class="ref-body">
-      <p><strong>Keep three names straight:</strong> <code>GGUF</code> is a file format. <code>JANG</code> is a different file format (Apple Silicon only). <code>Jan</code> is an application that runs GGUF files.</p>
+      <p><strong>Keep three names straight:</strong> <code>GGUF</code> is a file format. <code>JANG</code> is a newer Apple-Silicon-focused quantization format. <code>Jan</code> is an application that can run GGUF files.</p>
 
       <h4>Quantization, roughly (8B model)</h4>
       <table class="q">
@@ -467,7 +492,7 @@
 
       <h4>Formats</h4>
       <p><strong>GGUF</strong> — llama.cpp's format, used by Ollama, Jan, LM Studio. CPU and mixed CPU/GPU inference on consumer hardware. Quantization level sits in the filename.<br>
-      <strong>safetensors</strong> — full-precision weights on Hugging Face; what you quantize from and serve from on GPU.<br>
+      <strong>safetensors</strong> — a safe, efficient tensor serialization format used for Hugging Face checkpoints. It can contain tensors in different precisions, including quantized representations.<br>
       <strong>MLX</strong> — Apple's framework. Standard MLX quantization uses one uniform bit width across all layers.<br>
       <strong>JANG</strong> (<code>.jang</code>) — adaptive mixed-precision in the MLX family. Assigns different bit widths per layer type, on the reasoning that attention layers (~12% of parameters) are far more precision-sensitive than MLP layers. Served via MLX Studio. Apple Silicon only; quality claims are still thinly evidenced — run your own evals.<br>
       <strong>AWQ / GPTQ / EXL2</strong> — GPU quantization for server-side engines like vLLM.</p>
@@ -476,7 +501,7 @@
       <p>GGUF runs models on individual machines. AWQ/GPTQ with vLLM serves many concurrent users. Different problems, different tools — and the generalizable idea from JANG is that quantization needn't be uniform, which is a tradeoff analysis that belongs to an architect.</p>
 
       <h4>Why an architect cares</h4>
-      <p>Data residency, cost at volume, and the routing pattern — cheap local model for the easy majority, frontier model on escalation. Designing that router, and the evaluation that tells you where the boundary sits, is the job. The OpenAI-compatible endpoint every local runner exposes is the lever: design the abstraction for it and local-vs-hosted becomes configuration, not a rewrite.</p>
+      <p>Data residency, cost at volume, and the routing pattern — cheap or local model for the easy majority, stronger model on escalation. Designing that router, and the evaluation that tells you where the boundary sits, is the job. Many popular local inference servers expose an OpenAI-compatible API; design behind a provider abstraction and local-vs-hosted can become configuration rather than a rewrite.</p>
     </div>
   </details>
 
@@ -536,102 +561,183 @@ const PHASES = [
   },
   {
     id:"p2", title:"Phase 2 — Shaping model behaviour", weeks:"Weeks 4–6",
-    goal:"The layer directly above the model, where most real design mistakes get made.",
+    goal:"Design the model boundary deliberately: what enters the context, what leaves the model, and when a different system pattern or model is justified.",
     items:[
-      {w:4, title:"Prompting as engineering", tasks:[
-        {done:false, id:"w4a", kind:"learn", text:"Structured prompting, not tricks: roles, few-shot, decomposition, chain-of-thought, why prompts must be testable."},
-        {done:false, id:"w4b", kind:"build", text:"Pick one real task. Write 3–4 prompt versions and score them against test cases you define."},
-        {done:false, id:"w4c", kind:"done when", text:"You treat a prompt like code — versioned, tested, with known failure cases."}
+      {w:4, title:"Prompt and context engineering", tasks:[
+        {done:false, id:"w4a", kind:"learn", text:"Treat instructions, examples, retrieved data, tool definitions and conversation state as one context design. Learn task decomposition and reasoning strategies rather than relying on prompt tricks."},
+        {done:false, id:"w4b", kind:"build", text:"Pick one real task. Create 3–4 prompt and context variants, then score them against test cases you define."},
+        {done:false, id:"w4c", kind:"build", text:"Create a context budget. Measure tokens, decide what to retain, retrieve, summarise, cache or exclude, and test what happens near the context limit."},
+        {done:false, id:"w4d", kind:"done when", text:"You can explain why each piece of information belongs in system instructions, user input, retrieved context, conversation memory or nowhere at all."}
       ]},
-      {w:5, title:"Structured output and reliability", tasks:[
-        {done:false, id:"w5a", kind:"learn", text:"Reliable JSON output, function/tool calling at the API level, malformed responses, retries, validation."},
-        {done:false, id:"w5b", kind:"build", text:"Extend week 4's task to return validated JSON. Add schema validation and a repair path for malformed output."},
-        {done:false, id:"w5c", kind:"done when", text:"A non-deterministic component produces output deterministic software can safely depend on, and you know its failure modes."}
+      {w:5, title:"Structured output and model boundaries", tasks:[
+        {done:false, id:"w5a", kind:"learn", text:"Schema-constrained output, tool contracts, validation, timeouts, retries, idempotency and fallback. Treat model output as untrusted input."},
+        {done:false, id:"w5b", kind:"build", text:"Extend week 4's task to return validated JSON. Add schema validation, bounded retries, a repair path and an explicit fallback."},
+        {done:false, id:"w5c", kind:"test", text:"Inject malformed, incomplete and unsafe outputs. Verify deterministic code rejects them without corrupting state or leaking sensitive data."},
+        {done:false, id:"w5d", kind:"done when", text:"A non-deterministic component sits behind a narrow, observable contract that deterministic software can safely depend on."}
       ]},
-      {w:6, title:"The key decision: prompt vs. RAG vs. fine-tune", tasks:[
-        {done:false, id:"w6a", kind:"learn", text:"The decision tree and the cost, latency, freshness and maintenance tradeoffs of each."},
-        {done:false, id:"w6b", kind:"build", text:"Write a one-page decision doc for a real system — the kind you'd take into a design review."},
-        {done:false, id:"w6c", kind:"done when", text:"You can defend the choice on cost, latency, freshness and maintenance grounds."}
+      {w:6, title:"Architecture and model selection decisions", tasks:[
+        {done:false, id:"w6a", kind:"learn", text:"Use the escalation ladder: prompt → better context → RAG → tool/API → workflow → agent → fine-tuning. Understand SFT, LoRA/PEFT and their operational consequences."},
+        {done:false, id:"w6b", kind:"compare", text:"Benchmark at least three suitable models—small/cheap, reasoning/frontier and open or local—against the same evaluation set."},
+        {done:false, id:"w6c", kind:"build", text:"Write an architecture decision record for a real system covering quality, cost, latency, freshness, privacy, scale, vendor risk and maintenance."},
+        {done:false, id:"w6d", kind:"done when", text:"You can defend both the system pattern and model choice with measured evidence, not model popularity."}
       ]}
     ]
   },
   {
     id:"p3", title:"Phase 3 — System patterns", weeks:"Weeks 7–10",
-    goal:"The two dominant production patterns. This is where your architecture background starts compounding hard.",
+    goal:"Build production retrieval and tool-using systems, then learn when autonomy is warranted and how to contain it.",
     items:[
-      {w:7, title:"RAG, part 1 — the pipeline", tasks:[
-        {done:false, id:"w7a", kind:"learn", text:"Embeddings, vector stores, chunking strategies, similarity vs. hybrid search."},
-        {done:false, id:"w7b", kind:"build", text:"A working RAG system over documents you care about: ingest → chunk → embed → store → retrieve → answer."},
-        {done:false, id:"w7c", kind:"done when", text:"“Chat with my documents” works and you can name each stage's job."}
+      {w:7, title:"Production RAG, part 1 — retrieval pipeline", tasks:[
+        {done:false, id:"w7a", kind:"learn", text:"Ingestion, normalisation, chunking, metadata, embeddings, vector and keyword indexes, hybrid search, metadata filters, reranking, context assembly and citations."},
+        {done:false, id:"w7b", kind:"build", text:"Build RAG over documents you care about: ingest → normalise → chunk → index → retrieve → filter → rerank → assemble context → answer with citations."},
+        {done:false, id:"w7c", kind:"compare", text:"Run the same questions through vector-only and hybrid-plus-reranking retrieval. Record quality, latency and cost."},
+        {done:false, id:"w7d", kind:"done when", text:"You can name every pipeline stage, its failure modes and the metric that tells you whether it helps."}
       ]},
-      {w:8, title:"RAG, part 2 — where it gets hard", tasks:[
-        {done:false, id:"w8a", kind:"learn", text:"Retrieval quality, chunking tradeoffs, stale and conflicting data, and how retrieval is actually evaluated."},
-        {done:false, id:"w8b", kind:"build", text:"Add a retrieval eval harness: question/expected-source pairs plus a measure of whether the right context came back. Introduce a stale document and watch what breaks."},
-        {done:false, id:"w8c", kind:"done when", text:"You can measure retrieval quality rather than eyeball it."}
+      {w:8, title:"Production RAG, part 2 — trust and lifecycle", tasks:[
+        {done:false, id:"w8a", kind:"learn", text:"Retrieval evaluation, ACL-aware search, document freshness, updates and deletion, reindexing, conflicting sources, citations and provenance."},
+        {done:false, id:"w8b", kind:"build", text:"Add a retrieval eval harness with question/expected-source pairs, Recall@K and precision. Enforce user/document access filters before results reach the model."},
+        {done:false, id:"w8c", kind:"test", text:"Update and delete a source, introduce a contradiction, then prove the index, citations and answers reflect the correct version."},
+        {done:false, id:"w8d", kind:"done when", text:"You can measure retrieval quality and prove that users only receive current, authorised and traceable evidence."}
       ]},
-      {w:9, title:"Agentic systems, part 1", tasks:[
-        {done:false, id:"w9a", kind:"learn", text:"Tool calling, multi-step workflows, orchestration. LangGraph for patterns, MCP for how tool/data integration is standardising. Focus on patterns, not framework syntax."},
-        {done:false, id:"w9b", kind:"build", text:"An agent using 2–3 tools for a multi-step task. Happy path first."},
-        {done:false, id:"w9c", kind:"done when", text:"You understand the loop: model decides → tool executes → result feeds back → repeat."}
+      {w:9, title:"Workflows before agents", tasks:[
+        {done:false, id:"w9a", kind:"learn", text:"Distinguish deterministic applications, single LLM calls, workflows and agents. Study chaining, routing, parallelisation, orchestrator-worker and evaluator-optimizer patterns, plus MCP for tool integration."},
+        {done:false, id:"w9b", kind:"build", text:"Implement one multi-step task as a deterministic workflow using 2–3 narrow tools. Measure completion, steps, latency and cost."},
+        {done:false, id:"w9c", kind:"compare", text:"Implement an agentic version of the same task. Compare where autonomy adds measurable value and where it adds variance."},
+        {done:false, id:"w9d", kind:"done when", text:"You can justify the least-autonomous pattern that reliably completes the task."}
       ]},
-      {w:10, title:"Agentic systems, part 2 — reliability", tasks:[
-        {done:false, id:"w10a", kind:"learn", text:"Error recovery, loop control, cost containment, and where human-in-the-loop checkpoints belong. Pure architecture in an AI costume."},
-        {done:false, id:"w10b", kind:"build", text:"Harden week 9's agent: step limits, cost tracking, graceful tool failure, an approval checkpoint for consequential actions."},
-        {done:false, id:"w10c", kind:"done when", text:"It degrades gracefully instead of failing weirdly, and you can state its worst-case cost."}
+      {w:10, title:"Agent security and reliability", tasks:[
+        {done:false, id:"w10a", kind:"learn", text:"Direct and indirect prompt injection, sensitive-data leakage, improper output handling, excessive agency, least privilege, sandboxing and human approval."},
+        {done:false, id:"w10b", kind:"design", text:"Threat-model week 9's system. Mark trust boundaries, attacker-controlled content, permissions, consequential actions and audit requirements."},
+        {done:false, id:"w10c", kind:"build", text:"Harden it with narrow tools, authorisation outside the model, allowlists, step/time/cost limits, graceful tool failure and approval for consequential actions."},
+        {done:false, id:"w10d", kind:"test", text:"Run an adversarial suite containing direct injection, malicious retrieved documents, privilege escalation attempts and poisoned tool output."},
+        {done:false, id:"w10e", kind:"done when", text:"It fails safely, cannot exceed its permissions, produces an audit trail and has a stated worst-case cost."}
       ]}
     ]
   },
   {
     id:"p4", title:"Phase 4 — Production reality", weeks:"Weeks 11–12",
-    goal:"What separates a demo from a system. Nearly pure architecture, and where many teams are weakest — which is why it's high-leverage for you.",
+    goal:"Make quality, safety, cost and reliability visible, then design the platform layer that keeps models replaceable and operations controlled.",
     items:[
       {w:11, title:"Evaluation and observability", tasks:[
-        {done:false, id:"w11a", kind:"learn", text:"LLM-as-judge, regression testing for prompts, tracing a request through a multi-step system."},
-        {done:false, id:"w11b", kind:"build", text:"Add an eval suite and tracing to an earlier system. Change a prompt and see immediately whether quality regressed."},
-        {done:false, id:"w11c", kind:"done when", text:"You'd say “this still works” and back it with evidence rather than vibes."}
+        {done:false, id:"w11a", kind:"learn", text:"Separate retrieval, generation, agent and system evaluation. Combine deterministic checks, human review, model graders and real task outcomes."},
+        {done:false, id:"w11b", kind:"learn", text:"Use OpenTelemetry GenAI conventions to trace model, agent and tool spans with tokens, cost, latency, context size, retries, fallbacks and failure reasons."},
+        {done:false, id:"w11c", kind:"build", text:"Create a versioned golden dataset and regression suite for an earlier system. Include correctness, groundedness, completeness, format, safety and task completion."},
+        {done:false, id:"w11d", kind:"build", text:"Add end-to-end traces and a scorecard. Change a prompt, model and retrieval setting, then identify quality, latency and cost regressions."},
+        {done:false, id:"w11e", kind:"done when", text:"You can say “this still works” and support it with repeatable evidence tied to a specific system version."}
       ]},
-      {w:12, title:"The inference layer, local models, synthesis", tasks:[
-        {done:false, id:"w12a", kind:"learn", text:"Hosted vs. self-hosted, quantization and model formats (see reference below), GPU/RAM economics, latency budgets, caching."},
-        {done:false, id:"w12b", kind:"build", text:"Run a model locally — Jan, LM Studio or Ollama with a quantized 7B/8B. Compare quality and speed against the hosted API from week 3."},
-        {done:false, id:"w12c", kind:"build", text:"Point an earlier system at the local model via its OpenAI-compatible endpoint and see what breaks."},
-        {done:false, id:"w12d", kind:"build", text:"One page: which parts of these 12 weeks energised you, and which drained you."},
-        {done:false, id:"w12e", kind:"done when", text:"You can reason about cost, latency, control and privacy tradeoffs — and you have a real answer to “which path.”"}
+      {w:12, title:"AI platform, inference and governance", tasks:[
+        {done:false, id:"w12a", kind:"learn", text:"Hosted vs. self-hosted inference, quantization and formats, GPU/RAM economics, latency budgets, caching and model gateway responsibilities."},
+        {done:false, id:"w12b", kind:"design", text:"Design an AI gateway for authentication, quotas, provider abstraction, policy, model routing, caching, retries, rate limits, logging and fallback."},
+        {done:false, id:"w12c", kind:"build", text:"Run a quantized 7B/8B model locally and benchmark it against hosted models using your week 11 dataset—not a generic leaderboard."},
+        {done:false, id:"w12d", kind:"test", text:"Route an earlier system through the gateway. Force timeouts, rate limits and provider failure, then verify fallback and graceful degradation."},
+        {done:false, id:"w12e", kind:"review", text:"Write a production-readiness review covering PII, data residency, retention, auditability, model risk, human oversight, rollout and rollback."},
+        {done:false, id:"w12f", kind:"reflect", text:"One page: which parts of these 12 weeks energised you, which drained you, and which AI architecture lane you will pursue next."},
+        {done:false, id:"w12g", kind:"done when", text:"You can design a replaceable, observable and governed model layer, and defend its quality, cost, latency, control and privacy tradeoffs."}
       ]}
     ]
   }
 ];
 
-/* Resource links keyed by task id. All URLs verified current. */
+/* Curated resource links keyed by task id. */
 const LINKS = {
-  w1a:[{t:"Karpathy — Intro to LLMs (1hr)", u:"https://www.youtube.com/watch?v=zjkBMFhNj_g"}],
+  w1a:[
+    {t:"Karpathy — Intro to LLMs (1hr)", u:"https://www.youtube.com/watch?v=zjkBMFhNj_g"},
+    {t:"OpenAI — tiktoken", u:"https://github.com/openai/tiktoken"}
+  ],
   w1b:[{t:"Karpathy — Let's build GPT", u:"https://www.youtube.com/watch?v=kCc8FmEb1nY"}],
-  w2a:[{t:"Neural Networks: Zero to Hero", u:"https://karpathy.ai/zero-to-hero.html"}],
+  w2a:[
+    {t:"Neural Networks: Zero to Hero", u:"https://karpathy.ai/zero-to-hero.html"},
+    {t:"Paper — Attention Is All You Need", u:"https://arxiv.org/abs/1706.03762"}
+  ],
   w2b:[{t:"nanoGPT repo", u:"https://github.com/karpathy/nanoGPT"}],
-  w3a:[{t:"Anthropic — how Claude models behave", u:"https://docs.anthropic.com/en/docs/about-claude/models/overview"}],
-  w3b:[{t:"Anthropic API quickstart", u:"https://docs.anthropic.com/en/docs/get-started"}],
-  w4a:[{t:"Anthropic — prompt engineering", u:"https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}],
-  w5a:[{t:"Anthropic — tool use", u:"https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview"}],
-  w6a:[{t:"Hugging Face LLM Course", u:"https://huggingface.co/learn/llm-course/chapter1/1"}],
-  w7a:[{t:"HF LLM Course — RAG & retrieval", u:"https://huggingface.co/learn/llm-course/chapter1/1"}],
+  w3a:[
+    {t:"Anthropic — models overview", u:"https://docs.anthropic.com/en/docs/about-claude/models/overview"},
+    {t:"OpenAI — token counting", u:"https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken"}
+  ],
+  w3b:[{t:"OpenAI — API quickstart", u:"https://platform.openai.com/docs/quickstart"}],
+  w4a:[
+    {t:"Anthropic — prompt engineering", u:"https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"},
+    {t:"Anthropic — long context tips", u:"https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/long-context-tips"}
+  ],
+  w4c:[{t:"OpenAI — prompt caching", u:"https://platform.openai.com/docs/guides/prompt-caching"}],
+  w5a:[
+    {t:"OpenAI — Structured Outputs", u:"https://platform.openai.com/docs/guides/structured-outputs"},
+    {t:"Anthropic — tool use", u:"https://docs.anthropic.com/en/docs/build-with-claude/tool-use/overview"}
+  ],
+  w5b:[{t:"JSON Schema — getting started", u:"https://json-schema.org/learn/getting-started-step-by-step"}],
+  w6a:[
+    {t:"Hugging Face — PEFT", u:"https://huggingface.co/docs/peft/en/index"},
+    {t:"Hugging Face — LLM Course", u:"https://huggingface.co/learn/llm-course/chapter1/1"}
+  ],
+  w6b:[{t:"OpenAI — evaluation best practices", u:"https://platform.openai.com/docs/guides/evaluation-best-practices"}],
+  w6c:[{t:"Azure — architecture decision records", u:"https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record"}],
+  w7a:[
+    {t:"Azure AI Search — RAG overview", u:"https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"},
+    {t:"Azure AI Search — hybrid search", u:"https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview"},
+    {t:"Azure AI Search — semantic ranking", u:"https://learn.microsoft.com/en-us/azure/search/semantic-search-overview"}
+  ],
+  w8a:[
+    {t:"Azure AI Search — security filters", u:"https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search"},
+    {t:"OpenAI Cookbook — evaluate RAG", u:"https://cookbook.openai.com/examples/evaluation/evaluate_rag_with_llamaindex"}
+  ],
   w9a:[
+    {t:"Anthropic — Building effective agents", u:"https://www.anthropic.com/engineering/building-effective-agents"},
     {t:"LangGraph docs", u:"https://langchain-ai.github.io/langgraph/"},
     {t:"Model Context Protocol", u:"https://modelcontextprotocol.io"},
     {t:"HF Agents Course", u:"https://huggingface.co/learn/agents-course"}
   ],
-  w11a:[{t:"MCP spec (tracing/structure ref)", u:"https://modelcontextprotocol.io"}],
-  w12a:[{t:"vLLM docs (serving/quantization)", u:"https://docs.vllm.ai/en/latest/"}],
-  w12b:[
+  w10a:[
+    {t:"OWASP — Top 10 for LLM applications", u:"https://genai.owasp.org/llm-top-10/"},
+    {t:"NIST — GenAI risk profile", u:"https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
+  ],
+  w10b:[{t:"OWASP — threat modelling", u:"https://owasp.org/www-community/Threat_Modeling"}],
+  w10d:[{t:"Promptfoo — LLM red teaming", u:"https://www.promptfoo.dev/docs/red-team/"}],
+  w11a:[
+    {t:"OpenAI — evaluation best practices", u:"https://platform.openai.com/docs/guides/evaluation-best-practices"},
+    {t:"OpenAI Evals", u:"https://github.com/openai/evals"}
+  ],
+  w11b:[{t:"OpenTelemetry — GenAI conventions", u:"https://opentelemetry.io/docs/specs/semconv/gen-ai/"}],
+  w12a:[
+    {t:"vLLM — serving and quantization", u:"https://docs.vllm.ai/en/latest/"},
+    {t:"Hugging Face — quantization", u:"https://huggingface.co/docs/transformers/en/quantization/overview"}
+  ],
+  w12b:[{t:"Azure API Management — GenAI gateway", u:"https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities"}],
+  w12c:[
     {t:"Jan", u:"https://jan.ai"},
     {t:"Ollama", u:"https://ollama.com"},
     {t:"LM Studio", u:"https://lmstudio.ai"}
+  ],
+  w12e:[{t:"Azure — Well-Architected AI workloads", u:"https://learn.microsoft.com/en-us/azure/well-architected/ai/"}],
+  cap1:[
+    {t:"Azure — architecture decision records", u:"https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record"},
+    {t:"NIST — GenAI risk profile", u:"https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
+  ],
+  cap2:[
+    {t:"OpenAI — using tools", u:"https://platform.openai.com/docs/guides/tools"},
+    {t:"Anthropic — Building effective agents", u:"https://www.anthropic.com/engineering/building-effective-agents"}
+  ],
+  cap3:[{t:"OpenAI — evaluation best practices", u:"https://platform.openai.com/docs/guides/evaluation-best-practices"}],
+  cap4:[{t:"OpenTelemetry — GenAI conventions", u:"https://opentelemetry.io/docs/specs/semconv/gen-ai/"}],
+  cap5:[
+    {t:"OWASP — Top 10 for LLM applications", u:"https://genai.owasp.org/llm-top-10/"},
+    {t:"Azure — Well-Architected AI workloads", u:"https://learn.microsoft.com/en-us/azure/well-architected/ai/"}
+  ],
+  cap6:[
+    {t:"OpenAI — images and vision", u:"https://platform.openai.com/docs/guides/images-vision"},
+    {t:"OpenAI — audio and voice", u:"https://platform.openai.com/docs/guides/audio"}
   ]
 };
 
 const CAPSTONE = [
-  {done:false, id:"cap1", kind:"build", text:"One system combining retrieval, tool use, evaluation, cost and latency budgets, and graceful degradation."}
+  {done:false, id:"cap1", kind:"design", text:"Define a real use case, quality and safety goals, SLOs, cost ceiling, data classification and threat model. Record the key choices as architecture decision records."},
+  {done:false, id:"cap2", kind:"build", text:"Build the system with retrieval, at least two narrow tools, a workflow or justified agent, an AI gateway and human approval for consequential actions."},
+  {done:false, id:"cap3", kind:"prove", text:"Run retrieval, generation, agent, safety and system evals. Publish a scorecard for quality, latency, cost, task completion and known failure modes."},
+  {done:false, id:"cap4", kind:"operate", text:"Add end-to-end traces, quotas, fallback and a degradation path. Demonstrate model/provider failure without losing control or corrupting state."},
+  {done:false, id:"cap5", kind:"review", text:"Complete a production-readiness review covering security, privacy, governance, auditability, rollout, rollback and document lifecycle."},
+  {done:false, id:"cap6", kind:"optional", text:"Add a multimodal input such as an image, audio clip or complex document, then create modality-specific evaluation cases."}
 ];
 
-const STORAGE_KEY = "ai-arch-plan-progress";
+const STORAGE_KEY = "ai-arch-plan-progress-v2";
 let checked = new Set();
 let saveTimer = null;
 
@@ -750,6 +856,7 @@ function positionSpine(){
 function allTasks(){
   const t = [];
   PHASES.forEach(p => p.items.forEach(w => w.tasks.forEach(x => t.push(x))));
+  CAPSTONE.forEach(x => t.push(x));
   return t;
 }
 
@@ -806,6 +913,22 @@ function sourceDefaults(){
   return s;
 }
 
+async function readProgress(){
+  if(window.storage && typeof window.storage.get === "function"){
+    return window.storage.get(STORAGE_KEY);
+  }
+  const value = window.localStorage.getItem(STORAGE_KEY);
+  return value === null ? null : {value};
+}
+
+async function writeProgress(value){
+  if(window.storage && typeof window.storage.set === "function"){
+    return window.storage.set(STORAGE_KEY, value);
+  }
+  window.localStorage.setItem(STORAGE_KEY, value);
+  return true;
+}
+
 async function load(){
   checked = sourceDefaults();
   if(SOURCE_WINS){
@@ -814,7 +937,7 @@ async function load(){
     return;
   }
   try{
-    const r = await window.storage.get(STORAGE_KEY);
+    const r = await readProgress();
     if(r && r.value){
       const saved = JSON.parse(r.value);
       if(Array.isArray(saved)){
@@ -840,7 +963,7 @@ function save(){
     const map = {};
     allTasks().forEach(t => { map[t.id] = checked.has(t.id); });
     try{
-      const r = await window.storage.set(STORAGE_KEY, JSON.stringify(map));
+      const r = await writeProgress(JSON.stringify(map));
       statusEl.textContent = r ? "Saved" : "Couldn't save — changes stay for this session only";
     }catch(e){
       statusEl.textContent = "Couldn't save — changes stay for this session only";
@@ -884,10 +1007,14 @@ el("resetBtn").addEventListener("click", async e => {
   b.classList.remove("confirm");
   checked = new Set();
   render();
-  try{ await window.storage.delete(STORAGE_KEY); statusEl.textContent = "Cleared"; }
+  const cleared = {};
+  allTasks().forEach(t => { cleared[t.id] = false; });
+  try{ await writeProgress(JSON.stringify(cleared)); statusEl.textContent = "Cleared"; }
   catch(err){ statusEl.textContent = "Cleared for this session"; }
 });
 
 build();
 load();
 </script>
+</body>
+</html>
