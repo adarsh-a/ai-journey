@@ -203,7 +203,7 @@ footer{margin-top:clamp(32px,5vw,64px);padding-top:18px;border-top:1px solid var
 
 <section id="roadmap" aria-labelledby="roadmap-h">
   <h2 id="roadmap-h">12-week roadmap</h2>
-  <p class="sub">The code deliverables here run alongside your AI architecture tracker. Match the phase themes to your tracker's weekly items and adjust as needed. One project grows through all twelve weeks, so practice and portfolio are the same work.</p>
+  <p class="sub">Weeks and phases mirror your <a href="ai-architecture-plan-tracker.html">AI architecture tracker</a>. Each title is that week's tracker topic, and the line under it is what to build in code alongside. One project grows through all twelve weeks, and it can become your capstone and your portfolio.</p>
   <div class="meter">
     <span class="txt" id="road-txt">0 of 12 weeks</span>
     <div class="bar" role="progressbar" aria-labelledby="road-txt" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" id="road-bar"><i></i></div>
@@ -257,34 +257,40 @@ footer{margin-top:clamp(32px,5vw,64px);padding-top:18px;border-top:1px solid var
 
   var PHASES = [
     {
-      title:'Phase 1: Model mechanics and project foundation',
-      range:'Weeks 1 to 3',
-      gate:'Gate from your tracker: don\u2019t move past Week 3 until the mechanical model is solid.',
+      title:"Phase 1: The core mechanical model",
+      range:"Weeks 1 to 3",
+      gate:"Gate from your tracker: don\u2019t move past Week 3 until you can explain hallucination, nondeterminism and context limits at the level of the machinery.",
       weeks:[
-        {t:'Project skeleton', d:'.NET Web API with Docker, a first set of tests and CI on GitHub Actions.'},
-        {t:'Data and auth', d:'PostgreSQL with EF Core migrations, authentication, and tests that cover both.'},
-        {t:'First model calls', d:'A small Python script that calls an LLM API and logs tokens, latency and cost per request.'}
+        {t:"What a language model actually is", d:"Set up the .NET Web API skeleton with Docker, a first set of tests and CI on GitHub Actions. In Python, run a tokenizer such as tiktoken on a few strings, including non-English text, and note what surprises you."},
+        {t:"Attention and the transformer", d:"Add PostgreSQL with EF Core migrations and authentication to the API, with tests for both. Keep typing along with the nanoGPT work from your tracker."},
+        {t:"From mechanics to behaviour", d:"Write a Python script that calls a hosted LLM API. Log tokens, latency and cost per request, vary temperature, and record one hallucination and one tokenization bug with the reason for each."}
       ]
     },
     {
-      title:'Phase 2: Context, retrieval and workflows',
-      range:'Weeks 4 to 8',
+      title:"Phase 2: Shaping model behaviour",
+      range:"Weeks 4 to 6",
       weeks:[
-        {t:'Structured output', d:'Add an LLM endpoint to the API with JSON output, schema validation and versioned prompts.'},
-        {t:'Context management', d:'Conversation history with a truncation or summarising strategy you can explain and defend.'},
-        {t:'Retrieval, first version', d:'Embeddings and pgvector, document chunking and top-k search over a real set of documents.'},
-        {t:'Retrieval, second version', d:'Reranking, hybrid search and answers that cite their sources.'},
-        {t:'Tool-calling workflow', d:'A multi-step workflow with 2 to 3 tools, retries, and recovery from a failed step.'}
+        {t:"Prompt and context engineering", d:"Add an LLM endpoint to the .NET API with versioned prompts and a token budget. Score 3 to 4 prompt variants against test cases you define."},
+        {t:"Structured output and model boundaries", d:"Return validated JSON from the endpoint, with schema validation, bounded retries, a repair path and a fallback. Add tests that feed it malformed and unsafe output."},
+        {t:"Architecture and model selection decisions", d:"Put a provider abstraction in front of the endpoint (Microsoft.Extensions.AI is one option), benchmark three models on the same test set, and commit an architecture decision record to the repo."}
       ]
     },
     {
-      title:'Phase 3: Security, evaluation and operations',
-      range:'Weeks 9 to 12',
+      title:"Phase 3: System patterns",
+      range:"Weeks 7 to 10",
       weeks:[
-        {t:'Evaluation set', d:'30 to 50 test questions, a scoring script and a baseline result you can improve on.'},
-        {t:'Security', d:'Prompt-injection tests, input and output checks, and clear permission boundaries for tools.'},
-        {t:'Observability and cost', d:'Tracing, cost per request, caching, and a fallback or cheaper-model routing path.'},
-        {t:'Capstone polish', d:'Deploy it, write the README, record the key architecture decisions and prepare a short demo.'}
+        {t:"Production RAG, part 1: retrieval pipeline", d:"Build ingest, normalise, chunk, index, retrieve, rerank and answer-with-citations using pgvector over documents you care about. Compare vector-only with hybrid plus reranking."},
+        {t:"Production RAG, part 2: trust and lifecycle", d:"Add a retrieval evaluation harness (Recall@K and precision) and enforce access filters before results reach the model. Write tests for updating and deleting a source."},
+        {t:"Workflows before agents", d:"Implement one multi-step task as a deterministic workflow with 2 to 3 narrow tools, then an agentic version. Compare completion, steps, latency and cost. Optionally expose a tool through an MCP server."},
+        {t:"Agent security and reliability", d:"Write a threat model, then harden the system with narrow tools, authorisation outside the model, limits and approval for consequential actions. Add an adversarial test suite to CI."}
+      ]
+    },
+    {
+      title:"Phase 4: Production reality",
+      range:"Weeks 11 to 12",
+      weeks:[
+        {t:"Evaluation and observability", d:"Create a versioned golden dataset and regression suite that runs in CI. Add OpenTelemetry traces and a scorecard, then change a prompt, a model and a retrieval setting to see the regressions."},
+        {t:"AI platform, inference and governance", d:"Add a gateway layer with routing, quotas and fallback. Run a quantized 7B or 8B model locally and benchmark it on your own dataset, then write the production-readiness review and a one-page reflection."}
       ]
     }
   ];
