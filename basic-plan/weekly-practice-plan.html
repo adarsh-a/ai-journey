@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly practice plan</title>
+<meta name="description" content="A weekly coding practice plan and 12-week roadmap for returning to hands-on backend work and moving into freelance AI projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F5;
+  --surface:#FFFFFF;
+  --ink:#14262E;
+  --muted:#4F626B;
+  --line:#D3DCE1;
+  --accent:#2F5BD3;
+  --algo:#2F5BD3;  --algo-t:#E3EAFB;
+  --build:#0F7B6C; --build-t:#DAF0EA;
+  --ai:#7A4FC4;    --ai-t:#ECE5F8;
+  --cap:#B8750A;   --cap-t:#F8EBD2;
+  --rev:#5E727C;   --rev-t:#E4EAED;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F181D;
+    --surface:#16232A;
+    --ink:#E6EEF2;
+    --muted:#9DB0BA;
+    --line:#2A3B44;
+    --accent:#8CA8FF;
+    --algo:#8CA8FF;  --algo-t:#1D2A52;
+    --build:#5FD1BE; --build-t:#12332E;
+    --ai:#BFA2F2;    --ai-t:#2C2350;
+    --cap:#F0B558;   --cap-t:#47340F;
+    --rev:#9DB0BA;   --rev-t:#223039;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F181D;
+  --surface:#16232A;
+  --ink:#E6EEF2;
+  --muted:#9DB0BA;
+  --line:#2A3B44;
+  --accent:#8CA8FF;
+  --algo:#8CA8FF;  --algo-t:#1D2A52;
+  --build:#5FD1BE; --build-t:#12332E;
+  --ai:#BFA2F2;    --ai-t:#2C2350;
+  --cap:#F0B558;   --cap-t:#47340F;
+  --rev:#9DB0BA;   --rev-t:#223039;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Schibsted Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,48px)}
+
+/* Header */
+header{padding-bottom:clamp(20px,3vw,36px)}
+h1{
+  font-size:clamp(2.1rem,6vw,4rem);
+  line-height:1.02;
+  letter-spacing:-0.03em;
+  font-weight:800;
+  margin:0 0 14px;
+  max-width:14ch;
+}
+.lede{font-size:1.1rem;color:var(--muted);max-width:60ch;margin:0 0 20px}
+nav.jump{display:flex;flex-wrap:wrap;gap:8px 18px;font-weight:600}
+nav.jump a{text-decoration:none;border-bottom:2px solid transparent;padding:2px 0}
+nav.jump a:hover{border-bottom-color:var(--accent)}
+
+section{padding-top:clamp(28px,4vw,52px)}
+h2{font-size:clamp(1.4rem,3vw,1.9rem);letter-spacing:-0.015em;margin:0 0 6px;font-weight:700}
+.sub{color:var(--muted);margin:0 0 20px;max-width:64ch}
+
+/* Progress */
+.meter{display:flex;align-items:center;gap:14px;margin:0 0 18px;flex-wrap:wrap}
+.meter .txt{font-weight:600;min-width:12ch}
+.bar{flex:1;min-width:140px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.bar>i{transition:width .25s ease}}
+button.link{
+  font:inherit;font-weight:600;color:var(--accent);background:none;border:0;padding:4px 2px;cursor:pointer;text-decoration:underline;
+}
+
+/* Week timeline */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:start}
+.day-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px 6px;font-weight:700}
+.day-head small{font-weight:600;color:var(--accent)}
+.day.today .day-head{color:var(--accent)}
+.block{
+  display:flex;flex-direction:column;gap:6px;
+  position:relative;
+  background:var(--t);
+  border-left:5px solid var(--c);
+  border-radius:6px;
+  padding:12px 12px 12px 13px;
+  min-height:max(96px,calc(var(--h) * 74px));
+  cursor:pointer;
+}
+.block:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.block input{position:absolute;top:12px;right:12px;width:20px;height:20px;margin:0;accent-color:var(--c);cursor:pointer}
+.block .cat{font-weight:700;font-size:.95rem;padding-right:28px;color:var(--ink)}
+.block .task{font-size:.9rem;color:var(--ink)}
+.block .hrs{margin-top:auto;font-weight:700;font-size:.85rem;color:var(--muted)}
+.block.done{opacity:.62}
+.block.done .cat{text-decoration:line-through}
+.cat-algo{--c:var(--algo);--t:var(--algo-t)}
+.cat-build{--c:var(--build);--t:var(--build-t)}
+.cat-ai{--c:var(--ai);--t:var(--ai-t)}
+.cat-cap{--c:var(--cap);--t:var(--cap-t)}
+.cat-rev{--c:var(--rev);--t:var(--rev-t)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:16px;font-size:.9rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+
+/* Roadmap */
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:clamp(16px,2.5vw,26px);margin-bottom:16px}
+.phase h3{margin:0 0 2px;font-size:1.2rem}
+.phase .gate{margin:6px 0 4px;padding:8px 12px;border-left:4px solid var(--cap);background:var(--cap-t);border-radius:4px;font-size:.92rem}
+.phase .range{color:var(--muted);margin:0 0 6px;font-size:.95rem}
+.wk{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.wk:first-of-type{border-top:0}
+.wk input,.item input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--accent);cursor:pointer;flex:none}
+.wk label{cursor:pointer;display:block}
+.wk .t{font-weight:700}
+.wk .d{color:var(--muted);font-size:.95rem;margin-top:2px}
+.wk.done .t{text-decoration:line-through;opacity:.7}
+
+/* Skills + launch */
+.list{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px clamp(16px,2.5vw,26px)}
+.item{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:16px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item label{cursor:pointer;display:block}
+.item .t{font-weight:700}
+.item .d{color:var(--muted);font-size:.95rem;margin-top:2px}
+.item .proof{font-size:.92rem;margin-top:6px}
+.item .proof b{font-weight:700}
+.item.done .t{text-decoration:line-through;opacity:.7}
+
+footer{margin-top:clamp(32px,5vw,64px);padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between}
+
+/* Responsive */
+@media (max-width:960px){
+  .week{grid-template-columns:1fr;gap:12px}
+  .day{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:12px;align-items:start}
+  .day-head{flex-direction:column;gap:0;padding-top:12px}
+  .block{min-height:0}
+}
+@media print{
+  body{background:#fff;color:#000}
+  nav.jump,button.link{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Weekly practice plan</h1>
+  <p class="lede">Ten hours a week to rebuild hands-on backend skills while working through the AI architect tracker, aimed at remote senior roles and freelance AI projects.</p>
+  <nav class="jump" aria-label="Page sections">
+    <a href="#week">This week</a>
+    <a href="#roadmap">12-week roadmap</a>
+    <a href="#skills">AI skills for freelance work</a>
+    <a href="#launch">Freelance launch</a>
+    <a href="ai-architecture-plan-tracker.html">AI architecture tracker</a>
+  </nav>
+  <noscript><p>This page needs JavaScript to show the plan and save your progress.</p></noscript>
+</header>
+
+<main>
+
+<section id="week" aria-labelledby="week-h">
+  <h2 id="week-h">This week</h2>
+  <p class="sub">Tick each session when it's done. Your ticks reset automatically every Monday.</p>
+  <div class="meter">
+    <span class="txt" id="week-txt">0 of 7 sessions</span>
+    <div class="bar" role="progressbar" aria-labelledby="week-txt" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="week-bar"><i></i></div>
+    <button class="link" id="clear-week" type="button">Clear this week</button>
+  </div>
+  <div class="week" id="week-grid"></div>
+  <div class="legend" aria-label="Colour key">
+    <span class="cat-algo">Algorithms</span>
+    <span class="cat-build">Build</span>
+    <span class="cat-ai">AI tracker</span>
+    <span class="cat-cap">Capstone</span>
+    <span class="cat-rev">Review</span>
+  </div>
+</section>
+
+<section id="roadmap" aria-labelledby="roadmap-h">
+  <h2 id="roadmap-h">12-week roadmap</h2>
+  <p class="sub">The code deliverables here run alongside your AI architecture tracker. Match the phase themes to your tracker's weekly items and adjust as needed. One project grows through all twelve weeks, so practice and portfolio are the same work.</p>
+  <div class="meter">
+    <span class="txt" id="road-txt">0 of 12 weeks</span>
+    <div class="bar" role="progressbar" aria-labelledby="road-txt" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" id="road-bar"><i></i></div>
+  </div>
+  <div id="roadmap-list"></div>
+</section>
+
+<section id="skills" aria-labelledby="skills-h">
+  <h2 id="skills-h">AI skills for freelance work</h2>
+  <p class="sub">Client work in AI is mostly integration and production engineering, not model training. In rough priority order, each with proof you can show a client.</p>
+  <div class="meter">
+    <span class="txt" id="skills-txt">0 of 6 skills</span>
+    <div class="bar" role="progressbar" aria-labelledby="skills-txt" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="skills-bar"><i></i></div>
+  </div>
+  <div class="list" id="skills-list"></div>
+</section>
+
+<section id="launch" aria-labelledby="launch-h">
+  <h2 id="launch-h">Freelance launch checklist</h2>
+  <p class="sub">Start these once you have your first portfolio piece. You don't need to wait for week 12.</p>
+  <div class="meter">
+    <span class="txt" id="launch-txt">0 of 6 steps</span>
+    <div class="bar" role="progressbar" aria-labelledby="launch-txt" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="launch-bar"><i></i></div>
+  </div>
+  <div class="list" id="launch-list"></div>
+</section>
+
+</main>
+
+<footer>
+  <span>Progress is saved in this browser only.</span>
+  <button class="link" id="reset-all" type="button">Reset all progress</button>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- Data ---------- */
+  var DAYS = [
+    {id:'mon', name:'Monday',    h:1,   cat:'algo',  label:'Algorithms',            task:'2 medium problems. Explain your approach aloud before you code.'},
+    {id:'tue', name:'Tuesday',   h:2,   cat:'build', label:'Build in .NET',         task:'Project work: API, auth, database and tests.'},
+    {id:'wed', name:'Wednesday', h:1,   cat:'algo',  label:'Algorithms and review', task:'1 new problem, then redo one you got stuck on.'},
+    {id:'thu', name:'Thursday',  h:2,   cat:'ai',    label:'AI tracker',            task:"This week's tracker item, plus a small code experiment."},
+    {id:'fri', name:'Friday',    h:1,   cat:'build', label:'Python or Node',        task:'A small service or script that calls your .NET API or an LLM.'},
+    {id:'sat', name:'Saturday',  h:2.5, cat:'cap',   label:'Capstone',              task:'Capstone work or an open-source contribution.'},
+    {id:'sun', name:'Sunday',    h:0.5, cat:'rev',   label:'Review',                task:'Update the tracker and plan next week.'}
+  ];
+
+  var PHASES = [
+    {
+      title:'Phase 1: Model mechanics and project foundation',
+      range:'Weeks 1 to 3',
+      gate:'Gate from your tracker: don\u2019t move past Week 3 until the mechanical model is solid.',
+      weeks:[
+        {t:'Project skeleton', d:'.NET Web API with Docker, a first set of tests and CI on GitHub Actions.'},
+        {t:'Data and auth', d:'PostgreSQL with EF Core migrations, authentication, and tests that cover both.'},
+        {t:'First model calls', d:'A small Python script that calls an LLM API and logs tokens, latency and cost per request.'}
+      ]
+    },
+    {
+      title:'Phase 2: Context, retrieval and workflows',
+      range:'Weeks 4 to 8',
+      weeks:[
+        {t:'Structured output', d:'Add an LLM endpoint to the API with JSON output, schema validation and versioned prompts.'},
+        {t:'Context management', d:'Conversation history with a truncation or summarising strategy you can explain and defend.'},
+        {t:'Retrieval, first version', d:'Embeddings and pgvector, document chunking and top-k search over a real set of documents.'},
+        {t:'Retrieval, second version', d:'Reranking, hybrid search and answers that cite their sources.'},
+        {t:'Tool-calling workflow', d:'A multi-step workflow with 2 to 3 tools, retries, and recovery from a failed step.'}
+      ]
+    },
+    {
+      title:'Phase 3: Security, evaluation and operations',
+      range:'Weeks 9 to 12',
+      weeks:[
+        {t:'Evaluation set', d:'30 to 50 test questions, a scoring script and a baseline result you can improve on.'},
+        {t:'Security', d:'Prompt-injection tests, input and output checks, and clear permission boundaries for tools.'},
+        {t:'Observability and cost', d:'Tracing, cost per request, caching, and a fallback or cheaper-model routing path.'},
+        {t:'Capstone polish', d:'Deploy it, write the README, record the key architecture decisions and prepare a short demo.'}
+      ]
+    }
+  ];
+
+  var SKILLS = [
+    {t:'LLM APIs', d:'Hosted model calls, structured JSON output, tool calling, streaming, retries and rate limits. Build in Python first, then in .NET with Semantic Kernel or Microsoft.Extensions.AI.', p:'The same small feature built in both languages.'},
+    {t:'Retrieval-augmented generation (RAG)', d:'Embeddings, chunking, vector search with pgvector, reranking and citations. This is the most common paid use case.', p:'Document Q&A over real PDFs, with links back to sources.'},
+    {t:'Agents and workflows', d:'Multi-step tool use, orchestration, and connecting to outside systems, including MCP servers.', p:'A workflow with 2 to 3 tools that recovers when a step fails.'},
+    {t:'Evaluation', d:'Test sets, regression checks and scoring, so quality is measured and not judged by eye.', p:'A 30 to 50 question set with a baseline score you can show improving.'},
+    {t:'Security and reliability', d:'Prompt injection, data leakage, guardrails, fallbacks, and control of cost and latency.', p:'A written threat list with a test for each item.'},
+    {t:'Deployment and observability', d:'Containers, cloud hosting, and tracing and logging for LLM calls.', p:'A live demo URL with request tracing and cost per request.'}
+  ];
+
+  var LAUNCH = [
+    {t:'Pick one narrow offer', d:'For example, document Q&A for small businesses, or workflow automation with LLMs. Narrow beats \u201cAI developer\u201d.'},
+    {t:'Publish 2 to 3 portfolio pieces', d:'Each with a short write-up: the problem, your design decisions, how you evaluated it, and what it costs to run.'},
+    {t:'Rewrite your CV and LinkedIn headline', d:'Lead with hands-on work and your chosen offer. Say plainly that you want an individual-contributor role.'},
+    {t:'Message 10 people in your network', d:'One line on what you offer, one link to a portfolio piece.'},
+    {t:'Set up one freelance profile', d:'Upwork, Turing, Toptal or Arc. Link your portfolio and use the same offer wording.'},
+    {t:'Define a starter package', d:'A fixed-scope, two-week proof of concept that makes it easy for a client to say yes.'}
+  ];
+
+  /* ---------- State ---------- */
+  var KEY = 'practice-plan.v1';
+  var state = {roadmap:{}, skills:{}, launch:{}, weeks:{}};
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      ['roadmap','skills','launch','weeks'].forEach(function(k){
+        if (parsed && typeof parsed[k] === 'object' && parsed[k]) state[k] = parsed[k];
+      });
+    }
+  } catch (e) { /* storage unavailable or corrupt: start empty */ }
+
+  function save(){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+  }
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function mondayKey(){
+    var d = new Date();
+    d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+  }
+  var WEEK = mondayKey();
+  var TODAY = (new Date().getDay() + 6) % 7;
+  if (!state.weeks[WEEK]) state.weeks[WEEK] = {};
+
+  /* ---------- Helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function hoursLabel(h){ return h < 1 ? Math.round(h*60) + ' min' : h + ' h'; }
+  function setMeter(prefix, done, total, unit){
+    $(prefix + '-txt').textContent = done + ' of ' + total + ' ' + unit;
+    var bar = $(prefix + '-bar');
+    bar.setAttribute('aria-valuenow', done);
+    bar.firstElementChild.style.width = (total ? (done/total*100) : 0) + '%';
+  }
+  function count(obj, ids){ return ids.filter(function(i){ return obj[i]; }).length; }
+
+  /* ---------- Week ---------- */
+  var weekGrid = $('week-grid');
+  weekGrid.innerHTML = DAYS.map(function(d, i){
+    return '<div class="day' + (i === TODAY ? ' today' : '') + '">' +
+      '<div class="day-head"><span>' + d.name + '</span>' + (i === TODAY ? '<small>Today</small>' : '') + '</div>' +
+      '<label class="block cat-' + d.cat + '" data-day="' + d.id + '">' +
+        '<input type="checkbox" data-day="' + d.id + '" aria-label="' + d.name + ': ' + d.label + ' done">' +
+        '<span class="cat">' + d.label + '</span>' +
+        '<span class="task">' + d.task + '</span>' +
+        '<span class="hrs">' + hoursLabel(d.h) + '</span>' +
+      '</label></div>';
+  }).join('');
+
+  function renderWeek(){
+    var ids = DAYS.map(function(d){ return d.id; });
+    var cur = state.weeks[WEEK];
+    ids.forEach(function(id){
+      var box = weekGrid.querySelector('input[data-day="' + id + '"]');
+      var blk = weekGrid.querySelector('label[data-day="' + id + '"]');
+      box.checked = !!cur[id];
+      blk.classList.toggle('done', !!cur[id]);
+    });
+    setMeter('week', count(cur, ids), ids.length, 'sessions');
+  }
+  weekGrid.addEventListener('change', function(e){
+    var id = e.target.getAttribute('data-day');
+    if (!id) return;
+    state.weeks[WEEK][id] = e.target.checked;
+    save(); renderWeek();
+  });
+  $('clear-week').addEventListener('click', function(){
+    state.weeks[WEEK] = {};
+    save(); renderWeek();
+  });
+
+  /* ---------- Roadmap ---------- */
+  var n = 0;
+  $('roadmap-list').innerHTML = PHASES.map(function(p){
+    var rows = p.weeks.map(function(w){
+      n += 1;
+      return '<div class="wk" data-row="w' + n + '">' +
+        '<input type="checkbox" id="w' + n + '" data-group="roadmap" data-id="w' + n + '">' +
+        '<label for="w' + n + '"><div class="t">Week ' + n + ': ' + w.t + '</div><div class="d">' + w.d + '</div></label>' +
+      '</div>';
+    }).join('');
+    return '<div class="phase"><h3>' + p.title + '</h3><p class="range">' + p.range + '</p>' +
+      (p.gate ? '<p class="gate">' + p.gate + '</p>' : '') + rows + '</div>';
+  }).join('');
+  var ROAD_IDS = []; for (var r = 1; r <= n; r++) ROAD_IDS.push('w' + r);
+
+  /* ---------- Skills and launch ---------- */
+  $('skills-list').innerHTML = SKILLS.map(function(s, i){
+    return '<div class="item" data-row="s' + i + '">' +
+      '<input type="checkbox" id="s' + i + '" data-group="skills" data-id="s' + i + '">' +
+      '<label for="s' + i + '"><div class="t">' + s.t + '</div><div class="d">' + s.d + '</div>' +
+      '<div class="proof"><b>Proof to show:</b> ' + s.p + '</div></label></div>';
+  }).join('');
+  var SKILL_IDS = SKILLS.map(function(_, i){ return 's' + i; });
+
+  $('launch-list').innerHTML = LAUNCH.map(function(s, i){
+    return '<div class="item" data-row="l' + i + '">' +
+      '<input type="checkbox" id="l' + i + '" data-group="launch" data-id="l' + i + '">' +
+      '<label for="l' + i + '"><div class="t">' + s.t + '</div><div class="d">' + s.d + '</div></label></div>';
+  }).join('');
+  var LAUNCH_IDS = LAUNCH.map(function(_, i){ return 'l' + i; });
+
+  function renderLists(){
+    document.querySelectorAll('input[data-group]').forEach(function(box){
+      var g = box.getAttribute('data-group'), id = box.getAttribute('data-id');
+      box.checked = !!state[g][id];
+      var row = box.closest('[data-row]');
+      if (row) row.classList.toggle('done', box.checked);
+    });
+    setMeter('road', count(state.roadmap, ROAD_IDS), ROAD_IDS.length, 'weeks');
+    setMeter('skills', count(state.skills, SKILL_IDS), SKILL_IDS.length, 'skills');
+    setMeter('launch', count(state.launch, LAUNCH_IDS), LAUNCH_IDS.length, 'steps');
+  }
+  document.addEventListener('change', function(e){
+    var box = e.target;
+    var g = box.getAttribute && box.getAttribute('data-group');
+    if (!g) return;
+    state[g][box.getAttribute('data-id')] = box.checked;
+    save(); renderLists();
+  });
+
+  /* ---------- Reset ---------- */
+  $('reset-all').addEventListener('click', function(){
+    if (!window.confirm('Reset all progress on this page? This cannot be undone.')) return;
+    state = {roadmap:{}, skills:{}, launch:{}, weeks:{}};
+    state.weeks[WEEK] = {};
+    save(); renderWeek(); renderLists();
+  });
+
+  renderWeek();
+  renderLists();
+  save();
+})();
+</script>
+</body>
+</html>
